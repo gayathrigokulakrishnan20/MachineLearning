@@ -1,41 +1,35 @@
-# Learning Platform ML
+# ML Book Notes #11–#13 — Deployment, Monitoring & Production Architecture
 
-A production-oriented ML project built step-by-step alongside my LinkedIn ML Book Notes series.
+Prediction and REST API are already covered in Post #10. This package focuses on deployment, monitoring, and the end-to-end operating model.
 
-## Goal
-Build a learning-platform ML pipeline for course-completion prediction, learner-risk detection, recommendations and segmentation.
+## Existing project prerequisites
+- `src/predict_api.py` — FastAPI app from Post #10
+- `models/learner_completion_pipeline.joblib` — saved pipeline from Post #9
+- `requirements.txt` — API runtime dependencies
 
-## Current stage: Step 1 — Data
-The project starts with a reproducible synthetic learner dataset.
+Keep your existing API; do not duplicate it.
 
-Features:
-- study_hours_per_week
-- quiz_score_pct
-- days_since_last_login
-- lessons_completed
-- courses_started
+## Post #11 — Deployment
+`render.yaml` and `Procfile` are examples. Adapt the start command and build settings to your repository. Ensure the trained model artifact is available in the deployed environment.
 
-Target:
-- course_completed (0/1)
+Deployment checklist:
+1. Confirm the app starts locally.
+2. Install runtime dependencies.
+3. Ensure the model artifact is available.
+4. Configure environment variables and secrets.
+5. Deploy to your chosen host.
+6. Test `/health` and a prediction end-to-end.
+7. Enable logs, alerts, access controls, and rollback.
 
-## Roadmap
-1. Problem definition & data
-2. Data exploration
-3. Data validation
-4. Data cleaning
-5. Data preprocessing
-6. Feature engineering
-5. Train/test split
-6. Model training
-7. Evaluation
-8. Model comparison
-9. Model persistence
-10. API
-11. Docker
-12. Monitoring & retraining
+## Post #12 — Monitoring
+Install `requirements-monitoring.txt`, then run:
+`python -m src.monitor --reference data/reference.csv --current data/current.csv`
 
-## Run
-```bash
-pip install -r requirements.txt
-python src/data_exploration.py
-```
+CSV files should contain one or more monitored columns such as `study_hours_per_week`, `quiz_score_pct`, `days_since_last_login`, `lessons_completed`, and `courses_started`. This is an educational screening signal, not proof of drift.
+
+Monitor data quality, feature/prediction distributions, model performance when actual outcomes arrive, API latency, errors, throughput, and model version. Drift should trigger investigation, not automatic retraining by itself.
+
+## Post #13 — End-to-End Architecture
+See `docs/END_TO_END_ARCHITECTURE.md`.
+
+Before production, add authentication, rate limiting, tests, structured logs, secure secrets, artifact/version management, alerting, rollback, privacy controls, and a documented retraining approval process. Verify current hosting-provider settings before deployment.

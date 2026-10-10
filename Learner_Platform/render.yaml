@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: learning-platform-ml
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn src.predict_api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MODEL_PATH
+        value: models/learner_completion_pipeline.joblib
+      - key: MODEL_VERSION
+        value: v1
